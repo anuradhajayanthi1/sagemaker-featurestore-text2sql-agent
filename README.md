@@ -55,50 +55,66 @@ export AWS_PROFILE=default
 export AWS_DEFAULT_REGION=us-east-1
 ```
 
-## Feature Store Setup
+## Step-by-Step: Full Setup from Scratch
 
-Create online-only feature groups:
+### 1. Create Feature Store (one-time)
+
+Create the IAM role, S3 bucket, and feature groups:
+
 ```bash
+# Online-only feature groups (fast lookups)
 python feature_store_online_poc.py
-```
 
-Create online + offline (Iceberg) feature groups:
-```bash
+# Online + Offline with Iceberg (SQL queries via Athena)
 python feature_store_online_offline_poc.py
 ```
 
-Tag Glue tables with metadata:
+This creates 4 feature groups in your AWS account with sample customer data.
+
+### 2. Tag Metadata in Glue (one-time)
+
+Add table descriptions, column comments, and join keys to the Glue Data Catalog:
+
 ```bash
 python metadata/tag_glue_tables.py
+```
+
+### 3. Generate Schema Context (run when schema changes)
+
+Auto-discover schema from Glue and generate the context file the agent uses:
+
+```bash
 python metadata/assemble_metadata.py --output schema
 ```
 
-## Running the Agents
+This creates `metadata/schema_prompt.txt` which the agent reads via the `get_schema` tool.
 
-Text-to-SQL agent (returns SQL only):
+### 4. Test the Agent
+
 ```python
 from agent.text2sql_agent import generate_sql
 
-sql = generate_sql("What is the churn risk for customer C007?")
+sql = generate_sql("Which customers have churn risk above 0.7?")
 print(sql)
-# SELECT churn_risk_score FROM arro_poc_predictive_attrs_iceberg_... WHERE customer_id = 'C007'
 ```
 
-Orchestrator (routes between Feature Store and Snowflake):
-```bash
-python agent/orchestrator_agent.py
-```
+### 5. Run Evaluations
 
-## Running Evaluations
-
-Text-to-SQL eval (20 test cases, 2 evaluators):
 ```bash
+# Text-to-SQL agent (20 test cases)
 python evaluation/strands_eval_text2sql.py
+
+# Orchestrator agent (10 test cases)
+python evaluation/strands_eval_orchestrator.py
 ```
 
-Orchestrator eval (10 test cases, 2 evaluators):
+Results are saved to `evaluation/text2sql_eval_results.json` and `evaluation/orchestrator_eval_results.json`.
+
+### 6. Clean Up AWS Resources
+
 ```bash
-python evaluation/strands_eval_orchestrator.py
+# Delete feature groups (pass the timestamp suffix from creation)
+python cleanup.py <suffix>
 ```
 
 ## Evaluation Results
