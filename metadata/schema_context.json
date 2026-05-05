@@ -1,0 +1,306 @@
+{
+  "database": "sagemaker_featurestore",
+  "tables": [
+    {
+      "glue_table_name": "arro_poc_engagement_history_iceberg_20260412210737_1776053312",
+      "friendly_name": "engagement_history",
+      "description": "Customer engagement metrics across email, push notifications, in-app messages, campaigns, and rewards",
+      "domain": "engagement",
+      "primary_key": "customer_id",
+      "join_keys": [
+        "customer_id"
+      ],
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "string",
+          "description": "Unique customer identifier (primary key across all feature groups)"
+        },
+        {
+          "name": "email_open_rate",
+          "type": "double",
+          "description": "Fraction of marketing emails opened (0.0 to 1.0)"
+        },
+        {
+          "name": "push_notification_ctr",
+          "type": "double",
+          "description": "Push notification click-through rate (0.0 to 1.0)"
+        },
+        {
+          "name": "in_app_msg_response_rate",
+          "type": "double",
+          "description": "In-app message response rate (0.0 to 1.0)"
+        },
+        {
+          "name": "campaign_participation_count",
+          "type": "bigint",
+          "description": "Number of marketing campaigns participated in"
+        },
+        {
+          "name": "reward_redemption_rate",
+          "type": "double",
+          "description": "Fraction of available rewards redeemed (0.0 to 1.0)"
+        },
+        {
+          "name": "feedback_submissions",
+          "type": "bigint",
+          "description": "Number of feedback forms submitted"
+        },
+        {
+          "name": "nps_score",
+          "type": "bigint",
+          "description": "Net Promoter Score (0-10, higher is better)"
+        },
+        {
+          "name": "days_since_last_engagement",
+          "type": "bigint",
+          "description": "Days since last engagement activity"
+        },
+        {
+          "name": "engagement_trend",
+          "type": "string",
+          "description": "Recent engagement direction: increasing, stable, or declining"
+        },
+        {
+          "name": "retention_flag",
+          "type": "bigint",
+          "description": "Binary retention indicator: 1 = retained, 0 = churned"
+        },
+        {
+          "name": "event_time",
+          "type": "string",
+          "description": "Event timestamp in ISO-8601 format (used by Feature Store for versioning)"
+        }
+      ]
+    },
+    {
+      "glue_table_name": "arro_poc_interaction_history_iceberg_20260412210737_1776053259",
+      "friendly_name": "interaction_history",
+      "description": "Customer interaction history with the behavioral platform including logins, sessions, lessons, nudges, and chat usage",
+      "domain": "behavioral",
+      "primary_key": "customer_id",
+      "join_keys": [
+        "customer_id"
+      ],
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "string",
+          "description": "Unique customer identifier (primary key across all feature groups)"
+        },
+        {
+          "name": "total_logins_30d",
+          "type": "bigint",
+          "description": "Total number of logins in the last 30 days"
+        },
+        {
+          "name": "avg_session_duration_min",
+          "type": "double",
+          "description": "Average session duration in minutes over last 30 days"
+        },
+        {
+          "name": "lessons_completed",
+          "type": "bigint",
+          "description": "Number of financial literacy lessons completed"
+        },
+        {
+          "name": "nudges_received",
+          "type": "bigint",
+          "description": "Number of behavioral nudges sent to the customer"
+        },
+        {
+          "name": "nudges_acted_on",
+          "type": "bigint",
+          "description": "Number of nudges the customer acted on"
+        },
+        {
+          "name": "chat_interactions",
+          "type": "bigint",
+          "description": "Number of AI chat interactions in last 30 days"
+        },
+        {
+          "name": "last_login_days_ago",
+          "type": "bigint",
+          "description": "Days since last login (0 = today)"
+        },
+        {
+          "name": "feature_usage_breadth",
+          "type": "double",
+          "description": "Fraction of app features used (0.0 to 1.0)"
+        },
+        {
+          "name": "mobile_usage_pct",
+          "type": "double",
+          "description": "Percentage of sessions from mobile device (0.0 to 1.0)"
+        },
+        {
+          "name": "peak_usage_hour",
+          "type": "bigint",
+          "description": "Hour of day with most activity (0-23)"
+        },
+        {
+          "name": "event_time",
+          "type": "string",
+          "description": "Event timestamp in ISO-8601 format (used by Feature Store for versioning)"
+        }
+      ]
+    },
+    {
+      "glue_table_name": "arro_poc_performance_metrics_iceberg_20260412210737_1776053288",
+      "friendly_name": "performance_metrics",
+      "description": "Customer financial performance metrics including spending, credit utilization, balances, and retention target",
+      "domain": "financial",
+      "primary_key": "customer_id",
+      "join_keys": [
+        "customer_id"
+      ],
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "string",
+          "description": "Unique customer identifier (primary key across all feature groups)"
+        },
+        {
+          "name": "avg_transaction_amount",
+          "type": "double",
+          "description": "Average transaction amount in USD"
+        },
+        {
+          "name": "monthly_spend",
+          "type": "double",
+          "description": "Total monthly spend in USD"
+        },
+        {
+          "name": "payment_on_time_rate",
+          "type": "double",
+          "description": "Fraction of payments made on time (0.0 to 1.0)"
+        },
+        {
+          "name": "credit_utilization",
+          "type": "double",
+          "description": "Credit utilization ratio (0.0 to 1.0, lower is better)"
+        },
+        {
+          "name": "account_age_months",
+          "type": "bigint",
+          "description": "Number of months since account was opened"
+        },
+        {
+          "name": "num_products",
+          "type": "bigint",
+          "description": "Number of financial products held by customer"
+        },
+        {
+          "name": "avg_balance",
+          "type": "double",
+          "description": "Average account balance in USD"
+        },
+        {
+          "name": "min_balance",
+          "type": "double",
+          "description": "Minimum account balance in USD over period"
+        },
+        {
+          "name": "max_balance",
+          "type": "double",
+          "description": "Maximum account balance in USD over period"
+        },
+        {
+          "name": "target",
+          "type": "bigint",
+          "description": "Binary retention label: 1 = retained/active, 0 = churned/at-risk (ground truth for ML)"
+        },
+        {
+          "name": "event_time",
+          "type": "string",
+          "description": "Event timestamp in ISO-8601 format (used by Feature Store for versioning)"
+        }
+      ]
+    },
+    {
+      "glue_table_name": "arro_poc_predictive_attrs_iceberg_20260412210737_1776053336",
+      "friendly_name": "predictive_attributes",
+      "description": "ML-derived predictive scores and customer segmentation attributes",
+      "domain": "predictive",
+      "primary_key": "customer_id",
+      "join_keys": [
+        "customer_id"
+      ],
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "string",
+          "description": "Unique customer identifier (primary key across all feature groups)"
+        },
+        {
+          "name": "churn_risk_score",
+          "type": "double",
+          "description": "ML-predicted probability of churning (0.0 to 1.0, higher = more likely to churn)"
+        },
+        {
+          "name": "lifetime_value_estimate",
+          "type": "double",
+          "description": "Estimated customer lifetime value in USD"
+        },
+        {
+          "name": "engagement_score",
+          "type": "double",
+          "description": "Composite engagement score (0.0 to 1.0)"
+        },
+        {
+          "name": "satisfaction_index",
+          "type": "double",
+          "description": "Customer satisfaction score (1.0 to 5.0)"
+        },
+        {
+          "name": "propensity_to_upgrade",
+          "type": "double",
+          "description": "Likelihood of upgrading to premium product (0.0 to 1.0)"
+        },
+        {
+          "name": "digital_adoption_score",
+          "type": "double",
+          "description": "Digital feature adoption level (0.0 to 1.0)"
+        },
+        {
+          "name": "support_ticket_frequency",
+          "type": "double",
+          "description": "Average support tickets per month"
+        },
+        {
+          "name": "referral_likelihood",
+          "type": "double",
+          "description": "Likelihood of referring others (0.0 to 1.0)"
+        },
+        {
+          "name": "segment_code",
+          "type": "string",
+          "description": "Customer segment: premium, standard, or basic"
+        },
+        {
+          "name": "risk_tier",
+          "type": "string",
+          "description": "Risk classification: low, medium, high, or critical"
+        },
+        {
+          "name": "event_time",
+          "type": "string",
+          "description": "Event timestamp in ISO-8601 format (used by Feature Store for versioning)"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "join_key": "customer_id",
+      "tables": [
+        "engagement_history",
+        "interaction_history",
+        "performance_metrics",
+        "predictive_attributes"
+      ],
+      "type": "shared_key",
+      "description": "Tables can be joined on 'customer_id'"
+    }
+  ]
+}

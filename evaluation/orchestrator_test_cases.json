@@ -1,0 +1,89 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Test cases for the orchestrator agent — evaluates routing, single-agent queries, and cross-agent synthesis",
+    "created": "2026-04-28"
+  },
+  "test_cases": [
+    {
+      "id": "O01",
+      "category": "route_featurestore",
+      "question": "What is the churn risk score for customer C004?",
+      "expected_route": "text2sql_featurestore",
+      "expected_trajectory": ["text2sql_featurestore"],
+      "metadata": {"difficulty": "easy", "agents_needed": 1}
+    },
+    {
+      "id": "O02",
+      "category": "route_featurestore",
+      "question": "Which customers have an engagement score above 0.8?",
+      "expected_route": "text2sql_featurestore",
+      "expected_trajectory": ["text2sql_featurestore"],
+      "metadata": {"difficulty": "easy", "agents_needed": 1}
+    },
+    {
+      "id": "O03",
+      "category": "route_featurestore",
+      "question": "Show me the NPS scores for all customers in the premium segment.",
+      "expected_route": "text2sql_featurestore",
+      "expected_trajectory": ["text2sql_featurestore"],
+      "metadata": {"difficulty": "medium", "agents_needed": 1}
+    },
+    {
+      "id": "O04",
+      "category": "route_snowflake",
+      "question": "What is the total revenue by spending category?",
+      "expected_route": "cortex_snowflake",
+      "expected_trajectory": ["cortex_snowflake"],
+      "metadata": {"difficulty": "easy", "agents_needed": 1}
+    },
+    {
+      "id": "O05",
+      "category": "route_snowflake",
+      "question": "Which customers have been flagged for fraud?",
+      "expected_route": "cortex_snowflake",
+      "expected_trajectory": ["cortex_snowflake"],
+      "metadata": {"difficulty": "easy", "agents_needed": 1}
+    },
+    {
+      "id": "O06",
+      "category": "route_snowflake",
+      "question": "Show me the monthly spend trends over the last 3 months.",
+      "expected_route": "cortex_snowflake",
+      "expected_trajectory": ["cortex_snowflake"],
+      "metadata": {"difficulty": "medium", "agents_needed": 1}
+    },
+    {
+      "id": "O07",
+      "category": "cross_agent",
+      "question": "For customers with high churn risk, what are their transaction spending patterns?",
+      "expected_route": "both",
+      "expected_trajectory": ["text2sql_featurestore", "cortex_snowflake"],
+      "metadata": {"difficulty": "hard", "agents_needed": 2}
+    },
+    {
+      "id": "O08",
+      "category": "cross_agent",
+      "question": "Compare the lifetime value of premium customers with their monthly revenue trends.",
+      "expected_route": "both",
+      "expected_trajectory": ["text2sql_featurestore", "cortex_snowflake"],
+      "metadata": {"difficulty": "hard", "agents_needed": 2}
+    },
+    {
+      "id": "O09",
+      "category": "cross_agent",
+      "question": "Are there any customers flagged for fraud who also have high churn risk scores?",
+      "expected_route": "both",
+      "expected_trajectory": ["text2sql_featurestore", "cortex_snowflake"],
+      "metadata": {"difficulty": "hard", "agents_needed": 2}
+    },
+    {
+      "id": "O10",
+      "category": "route_featurestore",
+      "question": "What is the average credit utilization for customers with a retention flag of 0?",
+      "expected_route": "text2sql_featurestore",
+      "expected_trajectory": ["text2sql_featurestore"],
+      "metadata": {"difficulty": "medium", "agents_needed": 1}
+    }
+  ]
+}

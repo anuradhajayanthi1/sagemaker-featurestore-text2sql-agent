@@ -1,0 +1,11 @@
+customer_id,churn_risk_score,lifetime_value_estimate,engagement_score,satisfaction_index,propensity_to_upgrade,digital_adoption_score,support_ticket_frequency,referral_likelihood,segment_code,risk_tier
+C001,0.15,8500.00,0.82,4.2,0.65,0.90,0.5,0.70,premium,low
+C002,0.72,2100.00,0.35,2.8,0.20,0.45,2.1,0.15,basic,high
+C003,0.08,15000.00,0.95,4.8,0.80,0.95,0.2,0.85,premium,low
+C004,0.88,800.00,0.20,2.1,0.10,0.30,3.5,0.05,basic,critical
+C005,0.25,6500.00,0.70,3.9,0.55,0.75,0.8,0.60,standard,medium
+C006,0.80,1500.00,0.28,2.5,0.15,0.40,2.8,0.10,basic,high
+C007,0.05,22000.00,0.98,4.9,0.90,0.98,0.1,0.92,premium,low
+C008,0.60,2800.00,0.42,3.0,0.30,0.55,1.5,0.25,standard,medium
+C009,0.20,7200.00,0.78,4.0,0.60,0.82,0.6,0.65,premium,low
+C010,0.85,1000.00,0.22,2.2,0.12,0.35,3.0,0.08,basic,critical

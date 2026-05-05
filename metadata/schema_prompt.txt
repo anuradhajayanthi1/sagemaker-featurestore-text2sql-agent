@@ -1,0 +1,81 @@
+DATABASE: sagemaker_featurestore
+TABLES: 4
+
+TABLE: arro_poc_engagement_history_iceberg_20260412210737_1776053312
+  Friendly name: engagement_history
+  Description: Customer engagement metrics across email, push notifications, in-app messages, campaigns, and rewards
+  Primary key: customer_id
+  Domain: engagement
+  Columns:
+    customer_id (string) -- Unique customer identifier (primary key across all feature groups)
+    email_open_rate (double) -- Fraction of marketing emails opened (0.0 to 1.0)
+    push_notification_ctr (double) -- Push notification click-through rate (0.0 to 1.0)
+    in_app_msg_response_rate (double) -- In-app message response rate (0.0 to 1.0)
+    campaign_participation_count (bigint) -- Number of marketing campaigns participated in
+    reward_redemption_rate (double) -- Fraction of available rewards redeemed (0.0 to 1.0)
+    feedback_submissions (bigint) -- Number of feedback forms submitted
+    nps_score (bigint) -- Net Promoter Score (0-10, higher is better)
+    days_since_last_engagement (bigint) -- Days since last engagement activity
+    engagement_trend (string) -- Recent engagement direction: increasing, stable, or declining
+    retention_flag (bigint) -- Binary retention indicator: 1 = retained, 0 = churned
+    event_time (string) -- Event timestamp in ISO-8601 format (used by Feature Store for versioning)
+
+TABLE: arro_poc_interaction_history_iceberg_20260412210737_1776053259
+  Friendly name: interaction_history
+  Description: Customer interaction history with the behavioral platform including logins, sessions, lessons, nudges, and chat usage
+  Primary key: customer_id
+  Domain: behavioral
+  Columns:
+    customer_id (string) -- Unique customer identifier (primary key across all feature groups)
+    total_logins_30d (bigint) -- Total number of logins in the last 30 days
+    avg_session_duration_min (double) -- Average session duration in minutes over last 30 days
+    lessons_completed (bigint) -- Number of financial literacy lessons completed
+    nudges_received (bigint) -- Number of behavioral nudges sent to the customer
+    nudges_acted_on (bigint) -- Number of nudges the customer acted on
+    chat_interactions (bigint) -- Number of AI chat interactions in last 30 days
+    last_login_days_ago (bigint) -- Days since last login (0 = today)
+    feature_usage_breadth (double) -- Fraction of app features used (0.0 to 1.0)
+    mobile_usage_pct (double) -- Percentage of sessions from mobile device (0.0 to 1.0)
+    peak_usage_hour (bigint) -- Hour of day with most activity (0-23)
+    event_time (string) -- Event timestamp in ISO-8601 format (used by Feature Store for versioning)
+
+TABLE: arro_poc_performance_metrics_iceberg_20260412210737_1776053288
+  Friendly name: performance_metrics
+  Description: Customer financial performance metrics including spending, credit utilization, balances, and retention target
+  Primary key: customer_id
+  Domain: financial
+  Columns:
+    customer_id (string) -- Unique customer identifier (primary key across all feature groups)
+    avg_transaction_amount (double) -- Average transaction amount in USD
+    monthly_spend (double) -- Total monthly spend in USD
+    payment_on_time_rate (double) -- Fraction of payments made on time (0.0 to 1.0)
+    credit_utilization (double) -- Credit utilization ratio (0.0 to 1.0, lower is better)
+    account_age_months (bigint) -- Number of months since account was opened
+    num_products (bigint) -- Number of financial products held by customer
+    avg_balance (double) -- Average account balance in USD
+    min_balance (double) -- Minimum account balance in USD over period
+    max_balance (double) -- Maximum account balance in USD over period
+    target (bigint) -- Binary retention label: 1 = retained/active, 0 = churned/at-risk (ground truth for ML)
+    event_time (string) -- Event timestamp in ISO-8601 format (used by Feature Store for versioning)
+
+TABLE: arro_poc_predictive_attrs_iceberg_20260412210737_1776053336
+  Friendly name: predictive_attributes
+  Description: ML-derived predictive scores and customer segmentation attributes
+  Primary key: customer_id
+  Domain: predictive
+  Columns:
+    customer_id (string) -- Unique customer identifier (primary key across all feature groups)
+    churn_risk_score (double) -- ML-predicted probability of churning (0.0 to 1.0, higher = more likely to churn)
+    lifetime_value_estimate (double) -- Estimated customer lifetime value in USD
+    engagement_score (double) -- Composite engagement score (0.0 to 1.0)
+    satisfaction_index (double) -- Customer satisfaction score (1.0 to 5.0)
+    propensity_to_upgrade (double) -- Likelihood of upgrading to premium product (0.0 to 1.0)
+    digital_adoption_score (double) -- Digital feature adoption level (0.0 to 1.0)
+    support_ticket_frequency (double) -- Average support tickets per month
+    referral_likelihood (double) -- Likelihood of referring others (0.0 to 1.0)
+    segment_code (string) -- Customer segment: premium, standard, or basic
+    risk_tier (string) -- Risk classification: low, medium, high, or critical
+    event_time (string) -- Event timestamp in ISO-8601 format (used by Feature Store for versioning)
+
+RELATIONSHIPS:
+  Join key 'customer_id' shared by: engagement_history, interaction_history, performance_metrics, predictive_attributes

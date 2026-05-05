@@ -1,0 +1,11 @@
+customer_id,email_open_rate,push_notification_ctr,in_app_msg_response_rate,campaign_participation_count,reward_redemption_rate,feedback_submissions,nps_score,days_since_last_engagement,engagement_trend,retention_flag
+C001,0.65,0.12,0.45,5,0.80,3,9,2,increasing,1
+C002,0.20,0.02,0.10,1,0.15,0,4,14,declining,0
+C003,0.80,0.18,0.60,8,0.90,5,10,0,stable,1
+C004,0.10,0.01,0.05,0,0.05,0,2,21,declining,0
+C005,0.55,0.10,0.38,4,0.65,2,8,3,increasing,1
+C006,0.18,0.02,0.08,1,0.10,0,3,18,declining,0
+C007,0.85,0.22,0.70,10,0.95,7,10,0,increasing,1
+C008,0.30,0.05,0.20,2,0.30,1,5,7,stable,0
+C009,0.60,0.11,0.42,5,0.72,3,8,1,increasing,1
+C010,0.12,0.01,0.06,0,0.08,0,2,20,declining,0

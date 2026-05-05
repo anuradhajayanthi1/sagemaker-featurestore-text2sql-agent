@@ -1,0 +1,254 @@
+{
+  "SQL Semantic Check (LLM)": {
+    "score": 0.875,
+    "pass_rate": "16/20",
+    "details": [
+      {
+        "case": "{'input': 'What is the churn risk score for customer C007?', 'actual_output': \"SELECT churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE customer_id = 'C007'\", 'name': 'Q01', 'expected_output': \"SELECT churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE customer_id = 'C007'\", 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 1, 'category': 'single_lookup'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "The actual SQL query is identical to the expected SQL query. Both use the correct table (arro_poc_predictive_attrs_iceberg_20260412210737_1776053336), correct column (churn_risk_score), and correct filter (WHERE customer_id = 'C007'). They will return exactly the same results when executed."
+      },
+      {
+        "case": "{'input': 'How many customers are in the database?', 'actual_output': 'SELECT COUNT(DISTINCT customer_id) FROM arro_poc_engagement_history_iceberg_20260412210737_1776053312', 'name': 'Q02', 'expected_output': 'SELECT COUNT(*) AS customer_count FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 1, 'category': 'count'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 0.0,
+        "pass": false,
+        "reason": "The queries use completely different tables (engagement_history vs performance_metrics) and different counting logic (COUNT(DISTINCT customer_id) vs COUNT(*)). This represents fundamentally different logic that would likely produce different results."
+      },
+      {
+        "case": "{'input': 'Show me the NPS score and engagement trend for customer C001.', 'actual_output': \"SELECT\\n  customer_id,\\n  nps_score,\\n  engagement_trend\\nFROM arro_poc_engagement_history_iceberg_20260412210737_1776053312\\nWHERE customer_id = 'C001'\", 'name': 'Q03', 'expected_output': \"SELECT nps_score, engagement_trend FROM arro_poc_engagement_history_iceberg_20260412210737_1776053312 WHERE customer_id = 'C001'\", 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 1, 'category': 'single_lookup'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "The query uses the correct table and filter (customer_id = 'C001'), and returns the required columns (nps_score, engagement_trend) plus one extra column (customer_id). The results are equivalent with acceptable extra columns."
+      },
+      {
+        "case": "{'input': 'Which customers have a churn risk score greater than 0.7?', 'actual_output': 'SELECT customer_id, churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE churn_risk_score > 0.7 ORDER BY churn_risk_score DESC', 'name': 'Q04', 'expected_output': 'SELECT customer_id, churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE churn_risk_score > 0.7 ORDER BY churn_risk_score DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 2, 'category': 'filter_threshold'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "The actual SQL query is identical to the expected SQL query. Both use the same table, same WHERE clause filter (churn_risk_score > 0.7), same columns selected (customer_id, churn_risk_score), and same ORDER BY clause. The queries will return exactly the same results."
+      },
+      {
+        "case": "{'input': 'Show the top 3 customers with the highest lifetime value.', 'actual_output': 'SELECT customer_id, lifetime_value_estimate FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY lifetime_value_estimate DESC LIMIT 3', 'name': 'Q05', 'expected_output': 'SELECT customer_id, lifetime_value_estimate FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY lifetime_value_estimate DESC LIMIT 3', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 2, 'category': 'top_n'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "The actual SQL query is identical to the expected SQL query. It uses the correct table, selects the appropriate columns (customer_id, lifetime_value_estimate), orders by lifetime_value_estimate DESC, and limits to 3 results, which will return exactly the same data when executed."
+      },
+      {
+        "case": "{'input': 'Find customers who have credit utilization above 0.75 and payment on time rate below 0.75.', 'actual_output': 'SELECT customer_id, credit_utilization, payment_on_time_rate\\nFROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288\\nWHERE credit_utilization > 0.75 AND payment_on_time_rate < 0.75', 'name': 'Q06', 'expected_output': 'SELECT customer_id, credit_utilization, payment_on_time_rate FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 WHERE credit_utilization > 0.75 AND payment_on_time_rate < 0.75 ORDER BY credit_utilization DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 2, 'category': 'multi_condition'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Both queries use the correct table and identical filters. They return the same data set - the only difference is the missing ORDER BY clause, which doesn't affect the actual data returned, just the ordering."
+      },
+      {
+        "case": "{'input': 'How many customers are in the critical risk tier?', 'actual_output': \"SELECT COUNT(*) as critical_risk_customers FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE risk_tier = 'critical'\", 'name': 'Q07', 'expected_output': \"SELECT COUNT(*) AS critical_count FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE risk_tier = 'critical'\", 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 2, 'category': 'string_match'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Both queries use the correct table, identical WHERE filter (risk_tier = 'critical'), and equivalent COUNT(*) logic. They will return exactly the same data, differing only in column alias name which doesn't affect results."
+      },
+      {
+        "case": "{'input': 'What is the average monthly spend across all customers?', 'actual_output': 'SELECT AVG(monthly_spend) AS average_monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288', 'name': 'Q08', 'expected_output': 'SELECT AVG(monthly_spend) AS avg_monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 2, 'category': 'aggregation'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Both queries use the correct table, correct AVG function on monthly_spend column, and will return identical results. The only difference is the column alias (average_monthly_spend vs avg_monthly_spend), which doesn't affect the data returned."
+      },
+      {
+        "case": "{'input': 'What is the average monthly spend by customer segment?', 'actual_output': 'SELECT segment_code, AVG(monthly_spend) as avg_monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 JOIN arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ON arro_poc_performance_metrics_iceberg_20260412210737_1776053288.customer_id = arro_poc_predictive_attrs_iceberg_20260412210737_1776053336.customer_id GROUP BY segment_code ORDER BY segment_code', 'name': 'Q09', 'expected_output': 'SELECT pa.segment_code, AVG(pm.monthly_spend) AS avg_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa ON pm.customer_id = pa.customer_id GROUP BY pa.segment_code ORDER BY avg_spend DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'join_aggregate'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Both queries use correct tables, correct join logic, and equivalent aggregation. They would return the same data (segment_code and average monthly spend). Minor differences in aliases and ordering don't affect data correctness."
+      },
+      {
+        "case": "{'input': 'Show customers who are in the premium segment and have logged in more than 20 times in the last 30 days.', 'actual_output': \"SELECT\\n  pa.customer_id,\\n  pa.segment_code,\\n  ih.total_logins_30d,\\n  pa.engagement_score,\\n  pa.lifetime_value_estimate,\\n  pa.churn_risk_score\\nFROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa\\nJOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih\\n  ON pa.customer_id = ih.customer_id\\nWHERE pa.segment_code = 'premium'\\n  AND ih.total_logins_30d > 20\\nORDER BY ih.total_logins_30d DESC\", 'name': 'Q10', 'expected_output': \"SELECT pa.customer_id, pa.segment_code, ih.total_logins_30d FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pa.customer_id = ih.customer_id WHERE pa.segment_code = 'premium' AND ih.total_logins_30d > 20 ORDER BY ih.total_logins_30d DESC\", 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'two_table_join'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 0.5,
+        "pass": false,
+        "reason": "The query uses correct tables, joins, filters, and ordering logic that would return the same core data as expected. However, it includes 3 additional columns (engagement_score, lifetime_value_estimate, churn_risk_score) beyond the 3 required columns, which constitutes significantly more columns than needed."
+      },
+      {
+        "case": "{'input': 'Show retained customers who completed more than 5 lessons and have an NPS score of 8 or higher.', 'actual_output': 'SELECT\\n  e.customer_id,\\n  e.nps_score,\\n  i.lessons_completed,\\n  e.retention_flag\\nFROM arro_poc_engagement_history_iceberg_20260412210737_1776053312 e\\nJOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 i\\n  ON e.customer_id = i.customer_id\\nWHERE e.retention_flag = 1\\n  AND i.lessons_completed > 5\\n  AND e.nps_score >= 8', 'name': 'Q11', 'expected_output': 'SELECT pm.customer_id, ih.lessons_completed, eh.nps_score FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pm.customer_id = ih.customer_id JOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pm.customer_id = eh.customer_id WHERE pm.target = 1 AND ih.lessons_completed > 5 AND eh.nps_score >= 8 ORDER BY ih.lessons_completed DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'three_table_join'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 0.5,
+        "pass": false,
+        "reason": "The query has correct filters for lessons_completed > 5 and nps_score >= 8, but uses a different method to identify retained customers (retention_flag vs target from performance_metrics table). This could return different results despite having similar logic structure."
+      },
+      {
+        "case": "{'input': 'Calculate the nudge response rate (nudges acted on divided by nudges received) for each customer, sorted highest first.', 'actual_output': 'SELECT\\n  customer_id,\\n  CASE\\n    WHEN nudges_received = 0 THEN 0.0\\n    ELSE CAST(nudges_acted_on AS DOUBLE) / CAST(nudges_received AS DOUBLE)\\n  END AS nudge_response_rate\\nFROM arro_poc_interaction_history_iceberg_20260412210737_1776053259\\nORDER BY nudge_response_rate DESC', 'name': 'Q12', 'expected_output': 'SELECT customer_id, nudges_acted_on, nudges_received, CAST(nudges_acted_on AS DOUBLE) / NULLIF(nudges_received, 0) AS response_rate FROM arro_poc_interaction_history_iceberg_20260412210737_1776053259 ORDER BY response_rate DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'join_calculated'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Both queries use the correct table and calculate nudge response rate correctly. While they handle division by zero differently (CASE vs NULLIF) and have different column selections, they will return equivalent core results sorted correctly. The actual output meets the requirement of calculating nudge response rate for each customer sorted highest first."
+      },
+      {
+        "case": "{'input': 'What is the total monthly spend for customers who have logged in more than 15 times in the last 30 days?', 'actual_output': 'SELECT SUM(pm.monthly_spend) as total_monthly_spend\\nFROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm\\nINNER JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih\\n  ON pm.customer_id = ih.customer_id\\nWHERE ih.total_logins_30d > 15', 'name': 'Q13', 'expected_output': 'SELECT SUM(pm.monthly_spend) AS total_spend, COUNT(*) AS customer_count FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pm.customer_id = ih.customer_id WHERE ih.total_logins_30d > 15', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'join_sum'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "The query uses correct tables, correct join logic, and correct filter (total_logins_30d > 15). It accurately calculates the sum of monthly_spend to answer the question. The expected output includes an extra COUNT column not requested in the original question, making the actual output more precise."
+      },
+      {
+        "case": "{'input': 'Find customers with email open rates above 50% who participated in at least 4 campaigns and have average balances over $5000.', 'actual_output': 'SELECT\\n  eh.customer_id,\\n  eh.email_open_rate,\\n  eh.campaign_participation_count,\\n  pm.avg_balance\\nFROM arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh\\nJOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm\\n  ON eh.customer_id = pm.customer_id\\nWHERE eh.email_open_rate > 0.5\\n  AND eh.campaign_participation_count >= 4\\n  AND pm.avg_balance > 5000\\nORDER BY eh.email_open_rate DESC, pm.avg_balance DESC', 'name': 'Q14', 'expected_output': 'SELECT pm.customer_id, eh.email_open_rate, eh.campaign_participation_count, pm.avg_balance FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pm.customer_id = eh.customer_id WHERE eh.email_open_rate > 0.50 AND eh.campaign_participation_count >= 4 AND pm.avg_balance > 5000 ORDER BY pm.avg_balance DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'multi_table_filter'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "The actual SQL uses correct tables, correct filters (email_open_rate > 0.5, campaign_participation_count >= 4, avg_balance > 5000), and equivalent join logic. Both queries would return identical result sets with the same columns. Minor differences in column order and additional ORDER BY criteria don't affect correctness."
+      },
+      {
+        "case": "{'input': 'Which customers have a monthly spend higher than the average monthly spend of all customers?', 'actual_output': 'SELECT customer_id, monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 WHERE monthly_spend > (SELECT AVG(monthly_spend) FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288) ORDER BY monthly_spend DESC', 'name': 'Q15', 'expected_output': 'SELECT customer_id, monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 WHERE monthly_spend > (SELECT AVG(monthly_spend) FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288) ORDER BY monthly_spend DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'subquery'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "The actual SQL query is identical to the expected SQL query in every aspect - same table, same columns, same filter logic with subquery, and same ordering. Both queries will return exactly the same results."
+      },
+      {
+        "case": "{'input': 'Categorize customers into engagement levels: High (score above 0.7), Medium (0.4 to 0.7), and Low (below 0.4).', 'actual_output': \"SELECT\\n  customer_id,\\n  engagement_score,\\n  CASE\\n    WHEN engagement_score > 0.7 THEN 'High'\\n    WHEN engagement_score >= 0.4 AND engagement_score <= 0.7 THEN 'Medium'\\n    WHEN engagement_score < 0.4 THEN 'Low'\\n  END AS engagement_level\\nFROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336\\nORDER BY engagement_score DESC\", 'name': 'Q16', 'expected_output': \"SELECT customer_id, engagement_score, CASE WHEN engagement_score > 0.7 THEN 'High' WHEN engagement_score >= 0.4 THEN 'Medium' ELSE 'Low' END AS engagement_level FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY engagement_score DESC\", 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'case_statement'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Both queries use the correct table, select the same columns, have identical ordering, and implement logically equivalent CASE logic that will return identical results. The actual output is more explicit in its conditions but functionally equivalent to the expected output."
+      },
+      {
+        "case": "{'input': 'For each customer segment, show the average churn risk score, but only for segments where average monthly spend exceeds $1000.', 'actual_output': 'SELECT \\n    pa.segment_code,\\n    AVG(pa.churn_risk_score) as avg_churn_risk_score,\\n    AVG(pm.monthly_spend) as avg_monthly_spend\\nFROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa\\nJOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm \\n    ON pa.customer_id = pm.customer_id\\nGROUP BY pa.segment_code\\nHAVING AVG(pm.monthly_spend) > 1000\\nORDER BY pa.segment_code', 'name': 'Q17', 'expected_output': 'SELECT pa.segment_code, AVG(pa.churn_risk_score) AS avg_churn_risk, AVG(pm.monthly_spend) AS avg_spend FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa JOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm ON pa.customer_id = pm.customer_id GROUP BY pa.segment_code HAVING AVG(pm.monthly_spend) > 1000 ORDER BY avg_churn_risk ASC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'having'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correct tables, joins, grouping, and filtering logic. Returns equivalent core data (segment and avg churn risk for segments >$1000 spend). Extra avg_monthly_spend column is allowed per rubric. Different ordering doesn't affect data correctness."
+      },
+      {
+        "case": "{'input': 'For each customer, show their churn risk, monthly spend, total logins, and NPS score. Only include customers with churn risk above 0.5.', 'actual_output': 'SELECT\\n  p.customer_id,\\n  p.churn_risk_score,\\n  pm.monthly_spend,\\n  ih.total_logins_30d,\\n  eh.nps_score\\nFROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 p\\nJOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm ON p.customer_id = pm.customer_id\\nJOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON p.customer_id = ih.customer_id\\nJOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON p.customer_id = eh.customer_id\\nWHERE p.churn_risk_score > 0.5\\nORDER BY p.churn_risk_score DESC', 'name': 'Q18', 'expected_output': 'SELECT pa.customer_id, pa.churn_risk_score, pm.monthly_spend, ih.total_logins_30d, eh.nps_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa JOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm ON pa.customer_id = pm.customer_id JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pa.customer_id = ih.customer_id JOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pa.customer_id = eh.customer_id WHERE pa.churn_risk_score > 0.5 ORDER BY pa.churn_risk_score DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'four_table_join'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Both queries use correct tables, correct filters (churn_risk_score > 0.5), same columns, identical joins, and same ordering. The only difference is table alias naming (p vs pa) which doesn't affect functionality. The queries would return equivalent results."
+      },
+      {
+        "case": "{'input': 'Rank customers by lifetime value within each risk tier.', 'actual_output': 'SELECT\\n  risk_tier,\\n  customer_id,\\n  lifetime_value_estimate,\\n  ROW_NUMBER() OVER (PARTITION BY risk_tier ORDER BY lifetime_value_estimate DESC) as rank_within_tier\\nFROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336\\nWHERE risk_tier IS NOT NULL\\nORDER BY risk_tier, rank_within_tier', 'name': 'Q19', 'expected_output': 'SELECT customer_id, risk_tier, lifetime_value_estimate, ROW_NUMBER() OVER (PARTITION BY risk_tier ORDER BY lifetime_value_estimate DESC) AS rank_in_tier FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY risk_tier, rank_in_tier', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'window_function'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "The actual SQL uses the correct table, implements the same partitioning and ranking logic, selects the same columns, and would return equivalent results. The additional WHERE clause filtering null risk tiers is a reasonable improvement that doesn't change the core functionality."
+      },
+      {
+        "case": "{'input': 'Identify customers who are churned (target=0) but have above-average engagement scores, suggesting a model discrepancy.', 'actual_output': 'SELECT\\n  pm.customer_id,\\n  pm.target,\\n  pa.engagement_score,\\n  pa.churn_risk_score,\\n  pa.satisfaction_index,\\n  pm.monthly_spend,\\n  eh.days_since_last_engagement,\\n  ih.total_logins_30d\\nFROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm\\nJOIN arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa ON pm.customer_id = pa.customer_id\\nJOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pm.customer_id = eh.customer_id\\nJOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pm.customer_id = ih.customer_id\\nWHERE pm.target = 0\\n  AND pa.engagement_score > (SELECT AVG(engagement_score) FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336)\\nORDER BY pa.engagement_score DESC', 'name': 'Q20', 'expected_output': 'SELECT pm.customer_id, pm.target, pa.engagement_score, pa.churn_risk_score FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa ON pm.customer_id = pa.customer_id WHERE pm.target = 0 AND pa.engagement_score > (SELECT AVG(engagement_score) FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336) ORDER BY pa.engagement_score DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'complex_business'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 0.5,
+        "pass": false,
+        "reason": "The query has correct core tables, filters, and logic to identify churned customers (target=0) with above-average engagement scores. However, it includes additional unnecessary joins (eh, ih tables) and significantly more columns (8 vs 4) than the expected output, making it more complex than needed."
+      }
+    ]
+  },
+  "SQL Results Check (Athena)": {
+    "score": 0.9650000000000001,
+    "pass_rate": "19/20",
+    "details": [
+      {
+        "case": "{'input': 'What is the churn risk score for customer C007?', 'actual_output': \"SELECT churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE customer_id = 'C007'\", 'name': 'Q01', 'expected_output': \"SELECT churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE customer_id = 'C007'\", 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 1, 'category': 'single_lookup'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 1 columns, 1 rows"
+      },
+      {
+        "case": "{'input': 'How many customers are in the database?', 'actual_output': 'SELECT COUNT(DISTINCT customer_id) FROM arro_poc_engagement_history_iceberg_20260412210737_1776053312', 'name': 'Q02', 'expected_output': 'SELECT COUNT(*) AS customer_count FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 1, 'category': 'count'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match by position: 1 columns, 1 rows (aliases differ)"
+      },
+      {
+        "case": "{'input': 'Show me the NPS score and engagement trend for customer C001.', 'actual_output': \"SELECT\\n  customer_id,\\n  nps_score,\\n  engagement_trend\\nFROM arro_poc_engagement_history_iceberg_20260412210737_1776053312\\nWHERE customer_id = 'C001'\", 'name': 'Q03', 'expected_output': \"SELECT nps_score, engagement_trend FROM arro_poc_engagement_history_iceberg_20260412210737_1776053312 WHERE customer_id = 'C001'\", 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 1, 'category': 'single_lookup'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 2 columns, 1 rows"
+      },
+      {
+        "case": "{'input': 'Which customers have a churn risk score greater than 0.7?', 'actual_output': 'SELECT customer_id, churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE churn_risk_score > 0.7 ORDER BY churn_risk_score DESC', 'name': 'Q04', 'expected_output': 'SELECT customer_id, churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE churn_risk_score > 0.7 ORDER BY churn_risk_score DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 2, 'category': 'filter_threshold'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 2 columns, 4 rows"
+      },
+      {
+        "case": "{'input': 'Show the top 3 customers with the highest lifetime value.', 'actual_output': 'SELECT customer_id, lifetime_value_estimate FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY lifetime_value_estimate DESC LIMIT 3', 'name': 'Q05', 'expected_output': 'SELECT customer_id, lifetime_value_estimate FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY lifetime_value_estimate DESC LIMIT 3', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 2, 'category': 'top_n'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 2 columns, 3 rows"
+      },
+      {
+        "case": "{'input': 'Find customers who have credit utilization above 0.75 and payment on time rate below 0.75.', 'actual_output': 'SELECT customer_id, credit_utilization, payment_on_time_rate\\nFROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288\\nWHERE credit_utilization > 0.75 AND payment_on_time_rate < 0.75', 'name': 'Q06', 'expected_output': 'SELECT customer_id, credit_utilization, payment_on_time_rate FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 WHERE credit_utilization > 0.75 AND payment_on_time_rate < 0.75 ORDER BY credit_utilization DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 2, 'category': 'multi_condition'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 3 columns, 4 rows"
+      },
+      {
+        "case": "{'input': 'How many customers are in the critical risk tier?', 'actual_output': \"SELECT COUNT(*) as critical_risk_customers FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE risk_tier = 'critical'\", 'name': 'Q07', 'expected_output': \"SELECT COUNT(*) AS critical_count FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE risk_tier = 'critical'\", 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 2, 'category': 'string_match'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match by position: 1 columns, 1 rows (aliases differ)"
+      },
+      {
+        "case": "{'input': 'What is the average monthly spend across all customers?', 'actual_output': 'SELECT AVG(monthly_spend) AS average_monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288', 'name': 'Q08', 'expected_output': 'SELECT AVG(monthly_spend) AS avg_monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 2, 'category': 'aggregation'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match by position: 1 columns, 1 rows (aliases differ)"
+      },
+      {
+        "case": "{'input': 'What is the average monthly spend by customer segment?', 'actual_output': 'SELECT segment_code, AVG(monthly_spend) as avg_monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 JOIN arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ON arro_poc_performance_metrics_iceberg_20260412210737_1776053288.customer_id = arro_poc_predictive_attrs_iceberg_20260412210737_1776053336.customer_id GROUP BY segment_code ORDER BY segment_code', 'name': 'Q09', 'expected_output': 'SELECT pa.segment_code, AVG(pm.monthly_spend) AS avg_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa ON pm.customer_id = pa.customer_id GROUP BY pa.segment_code ORDER BY avg_spend DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'join_aggregate'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 1 columns, 3 rows"
+      },
+      {
+        "case": "{'input': 'Show customers who are in the premium segment and have logged in more than 20 times in the last 30 days.', 'actual_output': \"SELECT\\n  pa.customer_id,\\n  pa.segment_code,\\n  ih.total_logins_30d,\\n  pa.engagement_score,\\n  pa.lifetime_value_estimate,\\n  pa.churn_risk_score\\nFROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa\\nJOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih\\n  ON pa.customer_id = ih.customer_id\\nWHERE pa.segment_code = 'premium'\\n  AND ih.total_logins_30d > 20\\nORDER BY ih.total_logins_30d DESC\", 'name': 'Q10', 'expected_output': \"SELECT pa.customer_id, pa.segment_code, ih.total_logins_30d FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pa.customer_id = ih.customer_id WHERE pa.segment_code = 'premium' AND ih.total_logins_30d > 20 ORDER BY ih.total_logins_30d DESC\", 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'two_table_join'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 3 columns, 3 rows"
+      },
+      {
+        "case": "{'input': 'Show retained customers who completed more than 5 lessons and have an NPS score of 8 or higher.', 'actual_output': 'SELECT\\n  e.customer_id,\\n  e.nps_score,\\n  i.lessons_completed,\\n  e.retention_flag\\nFROM arro_poc_engagement_history_iceberg_20260412210737_1776053312 e\\nJOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 i\\n  ON e.customer_id = i.customer_id\\nWHERE e.retention_flag = 1\\n  AND i.lessons_completed > 5\\n  AND e.nps_score >= 8', 'name': 'Q11', 'expected_output': 'SELECT pm.customer_id, ih.lessons_completed, eh.nps_score FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pm.customer_id = ih.customer_id JOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pm.customer_id = eh.customer_id WHERE pm.target = 1 AND ih.lessons_completed > 5 AND eh.nps_score >= 8 ORDER BY ih.lessons_completed DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'three_table_join'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 3 columns, 5 rows"
+      },
+      {
+        "case": "{'input': 'Calculate the nudge response rate (nudges acted on divided by nudges received) for each customer, sorted highest first.', 'actual_output': 'SELECT\\n  customer_id,\\n  CASE\\n    WHEN nudges_received = 0 THEN 0.0\\n    ELSE CAST(nudges_acted_on AS DOUBLE) / CAST(nudges_received AS DOUBLE)\\n  END AS nudge_response_rate\\nFROM arro_poc_interaction_history_iceberg_20260412210737_1776053259\\nORDER BY nudge_response_rate DESC', 'name': 'Q12', 'expected_output': 'SELECT customer_id, nudges_acted_on, nudges_received, CAST(nudges_acted_on AS DOUBLE) / NULLIF(nudges_received, 0) AS response_rate FROM arro_poc_interaction_history_iceberg_20260412210737_1776053259 ORDER BY response_rate DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'join_calculated'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 1 columns, 10 rows"
+      },
+      {
+        "case": "{'input': 'What is the total monthly spend for customers who have logged in more than 15 times in the last 30 days?', 'actual_output': 'SELECT SUM(pm.monthly_spend) as total_monthly_spend\\nFROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm\\nINNER JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih\\n  ON pm.customer_id = ih.customer_id\\nWHERE ih.total_logins_30d > 15', 'name': 'Q13', 'expected_output': 'SELECT SUM(pm.monthly_spend) AS total_spend, COUNT(*) AS customer_count FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pm.customer_id = ih.customer_id WHERE ih.total_logins_30d > 15', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'join_sum'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 0.3,
+        "pass": false,
+        "reason": "No shared columns and different column count: expected ['total_spend', 'customer_count'], got ['total_monthly_spend']"
+      },
+      {
+        "case": "{'input': 'Find customers with email open rates above 50% who participated in at least 4 campaigns and have average balances over $5000.', 'actual_output': 'SELECT\\n  eh.customer_id,\\n  eh.email_open_rate,\\n  eh.campaign_participation_count,\\n  pm.avg_balance\\nFROM arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh\\nJOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm\\n  ON eh.customer_id = pm.customer_id\\nWHERE eh.email_open_rate > 0.5\\n  AND eh.campaign_participation_count >= 4\\n  AND pm.avg_balance > 5000\\nORDER BY eh.email_open_rate DESC, pm.avg_balance DESC', 'name': 'Q14', 'expected_output': 'SELECT pm.customer_id, eh.email_open_rate, eh.campaign_participation_count, pm.avg_balance FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pm.customer_id = eh.customer_id WHERE eh.email_open_rate > 0.50 AND eh.campaign_participation_count >= 4 AND pm.avg_balance > 5000 ORDER BY pm.avg_balance DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 3, 'category': 'multi_table_filter'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 4 columns, 4 rows"
+      },
+      {
+        "case": "{'input': 'Which customers have a monthly spend higher than the average monthly spend of all customers?', 'actual_output': 'SELECT customer_id, monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 WHERE monthly_spend > (SELECT AVG(monthly_spend) FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288) ORDER BY monthly_spend DESC', 'name': 'Q15', 'expected_output': 'SELECT customer_id, monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 WHERE monthly_spend > (SELECT AVG(monthly_spend) FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288) ORDER BY monthly_spend DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'subquery'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 2 columns, 4 rows"
+      },
+      {
+        "case": "{'input': 'Categorize customers into engagement levels: High (score above 0.7), Medium (0.4 to 0.7), and Low (below 0.4).', 'actual_output': \"SELECT\\n  customer_id,\\n  engagement_score,\\n  CASE\\n    WHEN engagement_score > 0.7 THEN 'High'\\n    WHEN engagement_score >= 0.4 AND engagement_score <= 0.7 THEN 'Medium'\\n    WHEN engagement_score < 0.4 THEN 'Low'\\n  END AS engagement_level\\nFROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336\\nORDER BY engagement_score DESC\", 'name': 'Q16', 'expected_output': \"SELECT customer_id, engagement_score, CASE WHEN engagement_score > 0.7 THEN 'High' WHEN engagement_score >= 0.4 THEN 'Medium' ELSE 'Low' END AS engagement_level FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY engagement_score DESC\", 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'case_statement'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 3 columns, 10 rows"
+      },
+      {
+        "case": "{'input': 'For each customer segment, show the average churn risk score, but only for segments where average monthly spend exceeds $1000.', 'actual_output': 'SELECT \\n    pa.segment_code,\\n    AVG(pa.churn_risk_score) as avg_churn_risk_score,\\n    AVG(pm.monthly_spend) as avg_monthly_spend\\nFROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa\\nJOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm \\n    ON pa.customer_id = pm.customer_id\\nGROUP BY pa.segment_code\\nHAVING AVG(pm.monthly_spend) > 1000\\nORDER BY pa.segment_code', 'name': 'Q17', 'expected_output': 'SELECT pa.segment_code, AVG(pa.churn_risk_score) AS avg_churn_risk, AVG(pm.monthly_spend) AS avg_spend FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa JOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm ON pa.customer_id = pm.customer_id GROUP BY pa.segment_code HAVING AVG(pm.monthly_spend) > 1000 ORDER BY avg_churn_risk ASC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'having'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 1 columns, 2 rows"
+      },
+      {
+        "case": "{'input': 'For each customer, show their churn risk, monthly spend, total logins, and NPS score. Only include customers with churn risk above 0.5.', 'actual_output': 'SELECT\\n  p.customer_id,\\n  p.churn_risk_score,\\n  pm.monthly_spend,\\n  ih.total_logins_30d,\\n  eh.nps_score\\nFROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 p\\nJOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm ON p.customer_id = pm.customer_id\\nJOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON p.customer_id = ih.customer_id\\nJOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON p.customer_id = eh.customer_id\\nWHERE p.churn_risk_score > 0.5\\nORDER BY p.churn_risk_score DESC', 'name': 'Q18', 'expected_output': 'SELECT pa.customer_id, pa.churn_risk_score, pm.monthly_spend, ih.total_logins_30d, eh.nps_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa JOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm ON pa.customer_id = pm.customer_id JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pa.customer_id = ih.customer_id JOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pa.customer_id = eh.customer_id WHERE pa.churn_risk_score > 0.5 ORDER BY pa.churn_risk_score DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'four_table_join'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 5 columns, 5 rows"
+      },
+      {
+        "case": "{'input': 'Rank customers by lifetime value within each risk tier.', 'actual_output': 'SELECT\\n  risk_tier,\\n  customer_id,\\n  lifetime_value_estimate,\\n  ROW_NUMBER() OVER (PARTITION BY risk_tier ORDER BY lifetime_value_estimate DESC) as rank_within_tier\\nFROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336\\nWHERE risk_tier IS NOT NULL\\nORDER BY risk_tier, rank_within_tier', 'name': 'Q19', 'expected_output': 'SELECT customer_id, risk_tier, lifetime_value_estimate, ROW_NUMBER() OVER (PARTITION BY risk_tier ORDER BY lifetime_value_estimate DESC) AS rank_in_tier FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY risk_tier, rank_in_tier', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'window_function'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 3 columns, 10 rows"
+      },
+      {
+        "case": "{'input': 'Identify customers who are churned (target=0) but have above-average engagement scores, suggesting a model discrepancy.', 'actual_output': 'SELECT\\n  pm.customer_id,\\n  pm.target,\\n  pa.engagement_score,\\n  pa.churn_risk_score,\\n  pa.satisfaction_index,\\n  pm.monthly_spend,\\n  eh.days_since_last_engagement,\\n  ih.total_logins_30d\\nFROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm\\nJOIN arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa ON pm.customer_id = pa.customer_id\\nJOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pm.customer_id = eh.customer_id\\nJOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pm.customer_id = ih.customer_id\\nWHERE pm.target = 0\\n  AND pa.engagement_score > (SELECT AVG(engagement_score) FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336)\\nORDER BY pa.engagement_score DESC', 'name': 'Q20', 'expected_output': 'SELECT pm.customer_id, pm.target, pa.engagement_score, pa.churn_risk_score FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa ON pm.customer_id = pa.customer_id WHERE pm.target = 0 AND pa.engagement_score > (SELECT AVG(engagement_score) FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336) ORDER BY pa.engagement_score DESC', 'expected_assertion': None, 'expected_trajectory': None, 'actual_trajectory': None, 'metadata': {'level': 4, 'category': 'complex_business'}, 'actual_interactions': None, 'expected_interactions': None, 'actual_environment_state': None, 'expected_environment_state': None}",
+        "score": 1.0,
+        "pass": true,
+        "reason": "Results match: 4 columns, 0 rows"
+      }
+    ]
+  }
+}

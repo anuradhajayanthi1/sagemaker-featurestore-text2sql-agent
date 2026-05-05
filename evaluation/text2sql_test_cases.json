@@ -1,0 +1,193 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "engine": "athena",
+    "database": "sagemaker_featurestore",
+    "athena_output": "CONFIGURED_AT_RUNTIME",
+    "region": "us-east-1",
+    "total_customers": 10,
+    "created": "2026-04-14"
+  },
+  "test_cases": [
+    {
+      "id": "Q01",
+      "level": 1,
+      "category": "single_lookup",
+      "question": "What is the churn risk score for customer C007?",
+      "ground_truth_sql": "SELECT churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE customer_id = 'C007'",
+      "expected_row_count": 1,
+      "tags": ["simple", "single_table", "filter"]
+    },
+    {
+      "id": "Q02",
+      "level": 1,
+      "category": "count",
+      "question": "How many customers are in the database?",
+      "ground_truth_sql": "SELECT COUNT(*) AS customer_count FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288",
+      "expected_row_count": 1,
+      "tags": ["simple", "aggregation", "count"]
+    },
+    {
+      "id": "Q03",
+      "level": 1,
+      "category": "single_lookup",
+      "question": "Show me the NPS score and engagement trend for customer C001.",
+      "ground_truth_sql": "SELECT nps_score, engagement_trend FROM arro_poc_engagement_history_iceberg_20260412210737_1776053312 WHERE customer_id = 'C001'",
+      "expected_row_count": 1,
+      "tags": ["simple", "single_table", "multi_column"]
+    },
+    {
+      "id": "Q04",
+      "level": 2,
+      "category": "filter_threshold",
+      "question": "Which customers have a churn risk score greater than 0.7?",
+      "ground_truth_sql": "SELECT customer_id, churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE churn_risk_score > 0.7 ORDER BY churn_risk_score DESC",
+      "expected_row_count": 4,
+      "tags": ["filter", "threshold", "ordering"]
+    },
+    {
+      "id": "Q05",
+      "level": 2,
+      "category": "top_n",
+      "question": "Show the top 3 customers with the highest lifetime value.",
+      "ground_truth_sql": "SELECT customer_id, lifetime_value_estimate FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY lifetime_value_estimate DESC LIMIT 3",
+      "expected_row_count": 3,
+      "tags": ["ordering", "limit", "top_n"]
+    },
+    {
+      "id": "Q06",
+      "level": 2,
+      "category": "multi_condition",
+      "question": "Find customers who have credit utilization above 0.75 and payment on time rate below 0.75.",
+      "ground_truth_sql": "SELECT customer_id, credit_utilization, payment_on_time_rate FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 WHERE credit_utilization > 0.75 AND payment_on_time_rate < 0.75 ORDER BY credit_utilization DESC",
+      "expected_row_count": 4,
+      "tags": ["filter", "multi_condition", "AND"]
+    },
+    {
+      "id": "Q07",
+      "level": 2,
+      "category": "string_match",
+      "question": "How many customers are in the critical risk tier?",
+      "ground_truth_sql": "SELECT COUNT(*) AS critical_count FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE risk_tier = 'critical'",
+      "expected_row_count": 1,
+      "tags": ["filter", "string_match", "count"]
+    },
+    {
+      "id": "Q08",
+      "level": 2,
+      "category": "aggregation",
+      "question": "What is the average monthly spend across all customers?",
+      "ground_truth_sql": "SELECT AVG(monthly_spend) AS avg_monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288",
+      "expected_row_count": 1,
+      "tags": ["aggregation", "average"]
+    },
+    {
+      "id": "Q09",
+      "level": 3,
+      "category": "join_aggregate",
+      "question": "What is the average monthly spend by customer segment?",
+      "ground_truth_sql": "SELECT pa.segment_code, AVG(pm.monthly_spend) AS avg_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa ON pm.customer_id = pa.customer_id GROUP BY pa.segment_code ORDER BY avg_spend DESC",
+      "expected_row_count": 3,
+      "tags": ["join", "group_by", "aggregation"]
+    },
+    {
+      "id": "Q10",
+      "level": 3,
+      "category": "two_table_join",
+      "question": "Show customers who are in the premium segment and have logged in more than 20 times in the last 30 days.",
+      "ground_truth_sql": "SELECT pa.customer_id, pa.segment_code, ih.total_logins_30d FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pa.customer_id = ih.customer_id WHERE pa.segment_code = 'premium' AND ih.total_logins_30d > 20 ORDER BY ih.total_logins_30d DESC",
+      "expected_row_count": 3,
+      "tags": ["join", "filter", "two_table"]
+    },
+    {
+      "id": "Q11",
+      "level": 3,
+      "category": "three_table_join",
+      "question": "Show retained customers who completed more than 5 lessons and have an NPS score of 8 or higher.",
+      "ground_truth_sql": "SELECT pm.customer_id, ih.lessons_completed, eh.nps_score FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pm.customer_id = ih.customer_id JOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pm.customer_id = eh.customer_id WHERE pm.target = 1 AND ih.lessons_completed > 5 AND eh.nps_score >= 8 ORDER BY ih.lessons_completed DESC",
+      "expected_row_count": 4,
+      "tags": ["join", "three_table", "multi_condition"]
+    },
+    {
+      "id": "Q12",
+      "level": 3,
+      "category": "join_calculated",
+      "question": "Calculate the nudge response rate (nudges acted on divided by nudges received) for each customer, sorted highest first.",
+      "ground_truth_sql": "SELECT customer_id, nudges_acted_on, nudges_received, CAST(nudges_acted_on AS DOUBLE) / NULLIF(nudges_received, 0) AS response_rate FROM arro_poc_interaction_history_iceberg_20260412210737_1776053259 ORDER BY response_rate DESC",
+      "expected_row_count": 10,
+      "tags": ["calculated_field", "division", "nullif"]
+    },
+    {
+      "id": "Q13",
+      "level": 3,
+      "category": "join_sum",
+      "question": "What is the total monthly spend for customers who have logged in more than 15 times in the last 30 days?",
+      "ground_truth_sql": "SELECT SUM(pm.monthly_spend) AS total_spend, COUNT(*) AS customer_count FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pm.customer_id = ih.customer_id WHERE ih.total_logins_30d > 15",
+      "expected_row_count": 1,
+      "tags": ["join", "sum", "filter"]
+    },
+    {
+      "id": "Q14",
+      "level": 3,
+      "category": "multi_table_filter",
+      "question": "Find customers with email open rates above 50% who participated in at least 4 campaigns and have average balances over $5000.",
+      "ground_truth_sql": "SELECT pm.customer_id, eh.email_open_rate, eh.campaign_participation_count, pm.avg_balance FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pm.customer_id = eh.customer_id WHERE eh.email_open_rate > 0.50 AND eh.campaign_participation_count >= 4 AND pm.avg_balance > 5000 ORDER BY pm.avg_balance DESC",
+      "expected_row_count": 4,
+      "tags": ["join", "multi_condition", "three_filters"]
+    },
+    {
+      "id": "Q15",
+      "level": 4,
+      "category": "subquery",
+      "question": "Which customers have a monthly spend higher than the average monthly spend of all customers?",
+      "ground_truth_sql": "SELECT customer_id, monthly_spend FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 WHERE monthly_spend > (SELECT AVG(monthly_spend) FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288) ORDER BY monthly_spend DESC",
+      "expected_row_count": 4,
+      "tags": ["subquery", "comparison", "average"]
+    },
+    {
+      "id": "Q16",
+      "level": 4,
+      "category": "case_statement",
+      "question": "Categorize customers into engagement levels: High (score above 0.7), Medium (0.4 to 0.7), and Low (below 0.4).",
+      "ground_truth_sql": "SELECT customer_id, engagement_score, CASE WHEN engagement_score > 0.7 THEN 'High' WHEN engagement_score >= 0.4 THEN 'Medium' ELSE 'Low' END AS engagement_level FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY engagement_score DESC",
+      "expected_row_count": 10,
+      "tags": ["case", "bucketing", "categorization"]
+    },
+    {
+      "id": "Q17",
+      "level": 4,
+      "category": "having",
+      "question": "For each customer segment, show the average churn risk score, but only for segments where average monthly spend exceeds $1000.",
+      "ground_truth_sql": "SELECT pa.segment_code, AVG(pa.churn_risk_score) AS avg_churn_risk, AVG(pm.monthly_spend) AS avg_spend FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa JOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm ON pa.customer_id = pm.customer_id GROUP BY pa.segment_code HAVING AVG(pm.monthly_spend) > 1000 ORDER BY avg_churn_risk ASC",
+      "expected_row_count": 2,
+      "tags": ["join", "group_by", "having"]
+    },
+    {
+      "id": "Q18",
+      "level": 4,
+      "category": "four_table_join",
+      "question": "For each customer, show their churn risk, monthly spend, total logins, and NPS score. Only include customers with churn risk above 0.5.",
+      "ground_truth_sql": "SELECT pa.customer_id, pa.churn_risk_score, pm.monthly_spend, ih.total_logins_30d, eh.nps_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa JOIN arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm ON pa.customer_id = pm.customer_id JOIN arro_poc_interaction_history_iceberg_20260412210737_1776053259 ih ON pa.customer_id = ih.customer_id JOIN arro_poc_engagement_history_iceberg_20260412210737_1776053312 eh ON pa.customer_id = eh.customer_id WHERE pa.churn_risk_score > 0.5 ORDER BY pa.churn_risk_score DESC",
+      "expected_row_count": 5,
+      "tags": ["four_table_join", "filter", "comprehensive"]
+    },
+    {
+      "id": "Q19",
+      "level": 4,
+      "category": "window_function",
+      "question": "Rank customers by lifetime value within each risk tier.",
+      "ground_truth_sql": "SELECT customer_id, risk_tier, lifetime_value_estimate, ROW_NUMBER() OVER (PARTITION BY risk_tier ORDER BY lifetime_value_estimate DESC) AS rank_in_tier FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY risk_tier, rank_in_tier",
+      "expected_row_count": 10,
+      "tags": ["window_function", "ranking", "partition"]
+    },
+    {
+      "id": "Q20",
+      "level": 4,
+      "category": "complex_business",
+      "question": "Identify customers who are churned (target=0) but have above-average engagement scores, suggesting a model discrepancy.",
+      "ground_truth_sql": "SELECT pm.customer_id, pm.target, pa.engagement_score, pa.churn_risk_score FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288 pm JOIN arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 pa ON pm.customer_id = pa.customer_id WHERE pm.target = 0 AND pa.engagement_score > (SELECT AVG(engagement_score) FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336) ORDER BY pa.engagement_score DESC",
+      "expected_row_count": 1,
+      "tags": ["subquery", "business_logic", "anomaly_detection"]
+    }
+  ]
+}

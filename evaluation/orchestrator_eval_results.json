@@ -1,0 +1,114 @@
+{
+  "Routing Check (Programmatic)": {
+    "score": 1.0,
+    "pass_rate": "10/10",
+    "details": [
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correctly routed to text2sql_featurestore"
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correctly routed to text2sql_featurestore"
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correctly routed to text2sql_featurestore"
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correctly routed to cortex_snowflake"
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correctly routed to cortex_snowflake"
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correctly routed to cortex_snowflake"
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correctly called both agents"
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correctly called both agents"
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correctly called both agents"
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "Correctly routed to text2sql_featurestore"
+      }
+    ]
+  },
+  "Response Quality (LLM)": {
+    "score": 0.6799999999999999,
+    "pass_rate": "5/10",
+    "details": [
+      {
+        "score": 0.5,
+        "pass": false,
+        "reason": "The output correctly identifies and queries the AWS SageMaker Feature Store data source with an appropriate SQL query, but fails to provide the actual churn risk score value for customer C004. While the methodology is sound and the data source is properly mentioned, the response is missing the specific data requested."
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "The response directly answers the data question with a specific SQL query to retrieve customers with engagement scores above 0.8, and clearly mentions the data source used (text2sql_featurestore via AWS SageMaker Feature Store). It provides both the method and context for getting the requested customer data."
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "The output directly answers the question by providing a specific SQL query that retrieves NPS scores for premium segment customers, clearly identifies the data source (text2sql_featurestore via AWS SageMaker Feature Store), and explains the results. It goes beyond the basic requirement by offering additional analysis options."
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "The output directly answers the question with specific revenue data by category ($45.2K Groceries, $32.1K Dining, etc.) and clearly identifies the data source used (Cortex Snowflake). Meets both criteria for maximum score."
+      },
+      {
+        "score": 0.0,
+        "pass": false,
+        "reason": "The output does not answer the question about which customers are flagged for fraud. While it correctly identifies the data source (cortex_snowflake) and shows understanding of the schema, it provides no specific customer data due to technical issues with the service."
+      },
+      {
+        "score": 0.5,
+        "pass": false,
+        "reason": "The output clearly mentions the data source used (Cortex Snowflake) and provides some spending data, but fails to directly answer the specific question about monthly spend trends over the last 3 months. Instead, it provides category-based spending data and explains why it couldn't fulfill the original request. This is a partial answer with clear source attribution but missing the core requested information."
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "The output directly answers the question with specific data (transaction amounts, frequencies, categories) and clearly mentions the data sources used (text2sql_featurestore and cortex_snowflake). It provides comprehensive spending pattern analysis for high churn risk customers."
+      },
+      {
+        "score": 0.3,
+        "pass": false,
+        "reason": "The output acknowledges both data sources (AWS SageMaker Feature Store and Snowflake) but fails to provide specific data for either LTV or monthly revenue trends. Instead of actual values, it shows placeholder text (~$XXXX) and admits technical limitations preventing retrieval of monthly revenue data. While it provides a helpful SQL query structure, it doesn't directly answer the comparison question with concrete data."
+      },
+      {
+        "score": 0.5,
+        "pass": false,
+        "reason": "The output partially answers by identifying fraud-flagged customers and mentioning high churn risk customers exist, and clearly states the data sources used. However, it fails to provide the specific cross-reference data needed to definitively answer whether there are customers in both categories, instead asking for permission to perform this analysis."
+      },
+      {
+        "score": 1.0,
+        "pass": true,
+        "reason": "The output directly answers the question with specific data (0.45 or 45% average credit utilization), clearly mentions the data source used (text2sql_featurestore), shows the SQL query executed, and provides additional context about the business insight. This fully meets the criteria for a score of 1.0."
+      }
+    ]
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "cases": [
+    {
+      "name": "Q01",
+      "session_id": "0c90d3e1-2311-4fd2-902c-22429cad4ba3",
+      "input": "What is the churn risk score for customer C007?",
+      "expected_output": "SELECT churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE customer_id = 'C007'",
+      "expected_assertion": null,
+      "expected_trajectory": [
+        "get_schema",
+        "run_sql"
+      ],
+      "expected_interactions": null,
+      "expected_environment_state": null,
+      "metadata": {
+        "level": 1,
+        "category": "single_lookup",
+        "expected_row_count": 1,
+        "tags": [
+          "simple",
+          "single_table",
+          "filter"
+        ]
+      }
+    },
+    {
+      "name": "Q02",
+      "session_id": "83463f29-3cf1-4b38-b139-d9196f02322e",
+      "input": "How many customers are in the database?",
+      "expected_output": "SELECT COUNT(*) AS customer_count FROM arro_poc_performance_metrics_iceberg_20260412210737_1776053288",
+      "expected_assertion": null,
+      "expected_trajectory": [
+        "get_schema",
+        "run_sql"
+      ],
+      "expected_interactions": null,
+      "expected_environment_state": null,
+      "metadata": {
+        "level": 1,
+        "category": "count",
+        "expected_row_count": 1,
+        "tags": [
+          "simple",
+          "aggregation",
+          "count"
+        ]
+      }
+    },
+    {
+      "name": "Q03",
+      "session_id": "3731afe8-6b66-41ee-bb1b-f67f325a5d72",
+      "input": "Show me the NPS score and engagement trend for customer C001.",
+      "expected_output": "SELECT nps_score, engagement_trend FROM arro_poc_engagement_history_iceberg_20260412210737_1776053312 WHERE customer_id = 'C001'",
+      "expected_assertion": null,
+      "expected_trajectory": [
+        "get_schema",
+        "run_sql"
+      ],
+      "expected_interactions": null,
+      "expected_environment_state": null,
+      "metadata": {
+        "level": 1,
+        "category": "single_lookup",
+        "expected_row_count": 1,
+        "tags": [
+          "simple",
+          "single_table",
+          "multi_column"
+        ]
+      }
+    },
+    {
+      "name": "Q04",
+      "session_id": "19d42ca3-28fb-41c5-83f4-e8444cd07317",
+      "input": "Which customers have a churn risk score greater than 0.7?",
+      "expected_output": "SELECT customer_id, churn_risk_score FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 WHERE churn_risk_score > 0.7 ORDER BY churn_risk_score DESC",
+      "expected_assertion": null,
+      "expected_trajectory": [
+        "get_schema",
+        "run_sql"
+      ],
+      "expected_interactions": null,
+      "expected_environment_state": null,
+      "metadata": {
+        "level": 2,
+        "category": "filter_threshold",
+        "expected_row_count": 4,
+        "tags": [
+          "filter",
+          "threshold",
+          "ordering"
+        ]
+      }
+    },
+    {
+      "name": "Q05",
+      "session_id": "217ea860-21aa-4bfa-b570-17d114b4e322",
+      "input": "Show the top 3 customers with the highest lifetime value.",
+      "expected_output": "SELECT customer_id, lifetime_value_estimate FROM arro_poc_predictive_attrs_iceberg_20260412210737_1776053336 ORDER BY lifetime_value_estimate DESC LIMIT 3",
+      "expected_assertion": null,
+      "expected_trajectory": [
+        "get_schema",
+        "run_sql"
+      ],
+      "expected_interactions": null,
+      "expected_environment_state": null,
+      "metadata": {
+        "level": 2,
+        "category": "top_n",
+        "expected_row_count": 3,
+        "tags": [
+          "ordering",
+          "limit",
+          "top_n"
+        ]
+      }
+    }
+  ],
+  "evaluators": [
+    {
+      "evaluator_type": "OutputEvaluator",
+      "rubric": "\n        Evaluate whether the generated SQL query is semantically equivalent to the expected SQL.\n        Both queries should return the same data when executed.\n\n        Score 1.0 if:\n        - The SQL queries the correct table(s)\n        - Uses the correct columns and filters\n        - Would return equivalent results (column order and aliases may differ)\n\n        Score 0.5 if:\n        - Correct tables and most columns, but minor differences in filters or ordering\n\n        Score 0.0 if:\n        - Wrong tables, wrong columns, or fundamentally different logic\n        ",
+      "model": "amazon.nova-pro-v1:0"
+    },
+    {
+      "evaluator_type": "TrajectoryEvaluator",
+      "rubric": "\n        Evaluate the agent's tool usage for a text-to-SQL task.\n\n        The expected workflow is:\n        1. Call get_schema to understand the database structure\n        2. Call run_sql to execute the generated query\n\n        Score 1.0 if:\n        - Agent called get_schema first, then run_sql\n        - No unnecessary tool calls\n\n        Score 0.5 if:\n        - Correct tools used but in suboptimal order, or extra retries needed\n\n        Score 0.0 if:\n        - Missing critical tool calls or used wrong tools entirely\n        ",
+      "trajectory_description": {
+        "get_schema": "Get the database schema including table names, columns, types, descriptions, and relationships.\n\nReturns:\n    str: The full schema context for the sagemaker_featurestore database.",
+        "run_sql": "Execute a SQL query against Amazon Athena and return the results.\n\nReturns:\n    str: Query results as a formatted table, or an error message if the query fails."
+      },
+      "model": "amazon.nova-pro-v1:0"
+    },
+    {
+      "evaluator_type": "SQLExecutionEvaluator",
+      "athena": 
